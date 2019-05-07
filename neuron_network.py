@@ -4,7 +4,7 @@ network.py
 
 A module to implement the stochastic gradient descent learning
 algorithm for a feedforward neural network.  Gradients are calculated
-using backpropagation.  Note that I have focused on making the code
+using back-propagation.  Note that I have focused on making the code
 simple, easily readable, and easily modifiable.  It is not optimized,
 and omits many desirable features.
 """
@@ -32,14 +32,14 @@ class Network(object):
         ever used in computing the outputs from later layers."""
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+        self.biases = [np.random.randn(y) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
         for b, w in zip(self.biases, self.weights):
-            a = sigmoid(np.dot(w, a) + b[:, 0])
+            a = sigmoid(np.dot(w, a) + b)
         return a
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
@@ -52,16 +52,13 @@ class Network(object):
         network will be evaluated against the test data after each
         epoch, and partial progress printed out.  This is useful for
         tracking progress, but slows things down substantially."""
-        if test_data:
-            n_test = len(test_data)
         n = len(training_data)
         for j in range(epochs):
             random.shuffle(training_data)
-            mini_batches = [training_data[k:k + mini_batch_size] for k in range(0, n, mini_batch_size)]
-            for mini_batch in mini_batches:
-                self.update_mini_batch(mini_batch, eta)
+            for k in range(0, n, mini_batch_size):
+                self.update_mini_batch(training_data[k:k+mini_batch_size], eta)
             if test_data:
-                print("Epoch {0}: {1} / {2}".format(j, self.evaluate(test_data), n_test))
+                print("Epoch {0}: {1} / {2}".format(j, self.evaluate(test_data), len(test_data)))
             else:
                 print("Epoch {0} complete".format(j))
 
@@ -90,16 +87,16 @@ class Network(object):
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         # feedforward
         activation = x
-        activations = [x]  # list to store all the activations, layer by layer
-        zs = []  # list to store all the z vectors, layer by layer
+        activations = [x] # list to store all the activations, layer by layer
+        zs = [] # list to store all the z vectors, layer by layer
         for b, w in zip(self.biases, self.weights):
-            z = np.dot(w, activation) + b[:,0]
-            # print(np.dot(w, activation), b[:,0], z)
+            z = np.dot(w, activation)+b
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
         # backward pass
-        delta = self.cost_derivative(activations[-1], y) * sigmoid_prime(zs[-1])
+        delta = self.cost_derivative(activations[-1], y) * \
+            sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-1].transpose())
         # Note that the variable l in the loop below is used a little
@@ -111,24 +108,35 @@ class Network(object):
         for l in range(2, self.num_layers):
             z = zs[-l]
             sp = sigmoid_prime(z)
-            delta = np.dot(self.weights[-l + 1].transpose(), delta) * sp
+            delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
             nabla_w[-l] = np.dot(delta, activations[-l].transpose())
         return nabla_b, nabla_w
 
-    def evaluate(self, test_data):
-
-        def f2(ll):
-            return np.argmax(ll)
-
+    def evaluate(self, data, convert=False):
         """Return the number of test inputs for which the neural
         network outputs the correct result. Note that the neural
         network's output is assumed to be the index of whichever
-        neuron in the final layer has the highest activation."""
-        test_results = [(np.argmax(self.feedforward(x)), f2(y))
-                        for (x, y) in test_data]
-        # print(test_results[0])
-        return sum(int(x == y) for (x, y) in test_results)
+        neuron in the final layer has the highest activation.
+
+        The flag ``convert`` should be set to False if the data set is
+        validation or test data (the usual case), and to True if the
+        data set is the training data. The need for this flag arises
+        due to differences in the way the results ``y`` are
+        represented in the different data sets.  In particular, it
+        flags whether we need to convert between the different
+        representations.  It may seem strange to use different
+        representations for the different data sets.  Why not use the
+        same representation for all three data sets?  It's done for
+        efficiency reasons -- the program usually evaluates the cost
+        on the training data and the accuracy on other data sets.
+        """
+        if convert:
+            f = np.argmax
+        else:
+            f = lambda z:z-1
+        return sum(np.argmax(self.feedforward(x)) == f(y) for (x, y) in data)
+
 
     @staticmethod
     def cost_derivative(output_activations, y):
@@ -145,4 +153,5 @@ def sigmoid(z):
 
 def sigmoid_prime(z):
     """Derivative of the sigmoid function."""
-    return sigmoid(z) * (1 - sigmoid(z))
+    s = sigmoid(z)
+    return s * (1 - s)
