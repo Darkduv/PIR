@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from cmath import phase
 phase = np.vectorize(phase)
-data = scipy.io.loadmat('base2.mat')
+data = scipy.io.loadmat('PIR0/base2.mat')
 
 mat = data["Base2"]
 
@@ -21,16 +21,16 @@ def plot_circle(h):
     Y = Z.imag
     plt.plot(X, Y)
 
-test = 1
-nn = 1000
+line_test = 1
+nn = 10
 
-aa = abs_histogram(mat[:-5,test], nn)
+aa = abs_histogram(mat[:-5, line_test], nn)
 plt.hist(aa[0], bins=aa[1])
 plt.show()
 
 
-print(mat[-5:, test])
-h0 = circle_histogram(mat[:-5,test], nn)
+print(mat[-5:, line_test])
+h0 = circle_histogram(mat[:-5, line_test], nn)
 plot_circle(h0)
 
 ax = plt.gca()  # gca stands for 'get current axis'
@@ -48,7 +48,7 @@ def plot_circle0(Z):
     plt.plot(X, Y, "o")
 
 
-plot_circle0(mat[:-5, test])
+plot_circle0(mat[:-5, line_test])
 ax = plt.gca()
 ax.spines['right'].set_color('none')
 ax.spines['top'].set_color('none')
@@ -76,7 +76,7 @@ def make_plot(sources):
     plt.plot(X, Y, "or")
 
 
-make_plot(mat[-5:, test])
+make_plot(mat[-5:, line_test])
 ax = plt.gca()
 ax.spines['right'].set_color('none')
 ax.spines['top'].set_color('none')
