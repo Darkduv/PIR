@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from scipy.ndimage import gaussian_filter
 
-from PIR0.main_nicolas import *
+from main_nicolas import *
 
 
 mat = np.zeros((1002, 10 * 1000), dtype=float)

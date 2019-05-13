@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from neuron_network_2 import *
+=======
+from neuron_network import *
+>>>>>>> d3e8076040f5ad67bd54b62a3f27f3bef740879f
 import csv
 import numpy as np
 
