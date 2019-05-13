@@ -1,4 +1,4 @@
-from PIR0.neuron_network import *
+from neuron_network import *
 import csv
 import numpy as np
 

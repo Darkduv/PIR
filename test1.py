@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from cmath import phase
 phase = np.vectorize(phase)
-data = scipy.io.loadmat('PIR0/base2.mat')
+data = scipy.io.loadmat('base2.mat')
 
 mat = data["Base2"]
 
@@ -42,46 +42,11 @@ ax.yaxis.set_ticks_position('left')
 ax.spines['left'].set_position(('data',0))
 plt.show()
 
-def plot_circle0(Z):
-    X = Z.real
-    Y = Z.imag
-    plt.plot(X, Y, "o")
 
 
-plot_circle0(mat[:-5, line_test])
-ax = plt.gca()
-ax.spines['right'].set_color('none')
-ax.spines['top'].set_color('none')
-ax.xaxis.set_ticks_position('bottom')
-ax.spines['bottom'].set_position(('data',0))
-ax.yaxis.set_ticks_position('left')
-ax.spines['left'].set_position(('data',0))
-# plt.show()
+from plot import *
+plot_data(mat[:-5, line_test])
+nice_plot()
+plot_sources(mat[-5:, line_test])
 
-def make_plot(sources):
-    n, qam1, qam2,h1, h2 = sources
-    hk = (h1, h2)
-    n, qamk = int(n), (int(qam1), int(qam2))
-    qam ={4 :np.array([-1-1j,1-1j,1+1j,-1+1j]),
-          16:np.array([-1-1j,1-1j,1+1j,-1+1j, -3-3j,3-3j,3+3j,-3+3j,
-              -3-1j,3-1j,3+1j,-3+1j, -1-3j,1-3j,1+3j,-1+3j])}
-    tab = np.array([0])
-    for k in range(1, n+1):
-        tab2 = np.array([])
-        for t in tab:
-            tab2 = np.concatenate((tab2,qam[qamk[k-1]]*hk[k-1]+t))
-        tab = tab2
-    X = tab.real
-    Y = tab.imag
-    plt.plot(X, Y, "or")
-
-
-make_plot(mat[-5:, line_test])
-ax = plt.gca()
-ax.spines['right'].set_color('none')
-ax.spines['top'].set_color('none')
-ax.xaxis.set_ticks_position('bottom')
-ax.spines['bottom'].set_position(('data', 0))
-ax.yaxis.set_ticks_position('left')
-ax.spines['left'].set_position(('data', 0))
 plt.show()
