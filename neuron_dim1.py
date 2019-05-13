@@ -1,4 +1,4 @@
-from PIR0.neuron_network import *
+from neuron_network_2 import *
 import csv
 import numpy as np
 
@@ -20,4 +20,4 @@ def f(x):
 training_data = [(mat[:-2, i], f(int(mat[-2, i]))) for i in range(8000)]
 test_data = [(mat[:-2, i], int(mat[-2, i])) for i in range(8000, 10000)]
 
-net.SGD(training_data, 40, 50, 2.9, test_data=test_data)
+net.SGD(training_data, 40, 50, 2.9,)# test_data=test_data)
