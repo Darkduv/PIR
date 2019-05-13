@@ -10,7 +10,6 @@ mat = data["Base2"]
 def abs_histogram(L, n):
     return np.histogram(abs(L), np.linspace(0, np.max(abs(L)), n))
 
-
 def circle_histogram(L, n):
     return np.histogram(phase(L), np.linspace(-np.pi, np.pi, n))
 
@@ -21,7 +20,7 @@ def plot_circle(h):
     Y = Z.imag
     plt.plot(X, Y)
 
-test = 1
+test = 5
 nn = 1000
 
 aa = abs_histogram(mat[:-5,test], nn)
