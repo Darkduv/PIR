@@ -2,6 +2,11 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 
+from scipy.ndimage import gaussian_filter
+
+from PIR0.main_nicolas import *
+
+
 mat = np.zeros((1002, 10 * 1000), dtype=float)
 with open("basevaleurs3.csv", "r") as f:
     reader = csv.reader(f)
@@ -40,10 +45,10 @@ plt.show()
 
 def count(func):
     maxis = 0
-    for i in range(1, len(func)-1):
-        if func[i-1] > 0 > func[i+1]:
+    for i in range(1, len(func) - 1):
+        if func[i - 1] > 0 > func[i + 1]:
             maxis += 1
-    return maxis//2  # 0 are not exacts, so we have a_i-1 > a_i > 0 > a_i+1 > a_i+2
+    return maxis // 2  # 0 are not exacts, so we have a_i-1 > a_i > 0 > a_i+1 > a_i+2
 
 
 def automate(i):
@@ -57,6 +62,6 @@ def automate(i):
 
 n_ok = 0
 for i in range(10 * 1000):
-    if automate(i) == mat[-2,i]:
-        n_ok +=1
-print(n_ok/10000)
+    if automate(i) == mat[-2, i]:
+        n_ok += 1
+print(n_ok / 10000)
