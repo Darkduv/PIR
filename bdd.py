@@ -2,11 +2,11 @@ import scipy.io
 import matplotlib.pyplot as plt
 import numpy as np
 
-#data = scipy.io.loadmat('base2.mat')
+data = scipy.io.loadmat('base2.mat')
 
-#mat = data["Base2"]
+mat = data["Base2"]
 
-#np.savetxt("bdd.csv",mat,delimiter=",")
+np.savetxt("bdd.csv",mat,delimiter=",")
 
 def load_db(filename):
     return np.genfromtxt(filename,delimiter=",",dtype="complex")
