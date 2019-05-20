@@ -4,3 +4,6 @@ base2.mat
 bdd_rotate.csv
 .idea
 __pycache__
+bdd_complex.npy
+bdd_real.npy
+bdd_rotate_20.npy

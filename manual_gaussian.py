@@ -1,14 +1,8 @@
-import csv
-import numpy as np
 import matplotlib.pyplot as plt
-
+from bdd_loader import *
 
 # we import the data of the csv in a np.array $mat$
-mat = np.zeros((1002, 10 * 1000), dtype=float)
-with open("base_values_3.csv", "r") as f:
-    reader = csv.reader(f)
-    for i, row in enumerate(reader):
-        mat[i] = [float(a) for a in row]
+mat = load_db("bdd_real.npy")
 
 
 # we build a filter in order to smooth the curve of the data

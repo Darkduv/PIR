@@ -1,31 +1,30 @@
-import scipy.io
+from plot_tools import *  # import also matplotlib.pyplot and numpy. no need to re-import them
 
-from plot import *  # import also matplotlib.pyplot and numpy. no need to re-import them
+from bdd_loader import *
 
 from cmath import phase
 phase = np.vectorize(phase)  # we vectorize the function to apply it on np.arrays
 
 
-data = scipy.io.loadmat('base2.mat')
-# We can see that 'Base2' is the right key by printing data.keys()
-mat = data["Base2"]
+# mat = load_db("bdd_complex.npy")
+mat = load_db("bdd_rotate_20.npy")
 
 
-def abs_histogram(L, n):
+def abs_histogram(ll, n):
     """Return histogram of abs(L) over [0, max(|L|)], sampling with $n$ values"""
-    return np.histogram(abs(L), np.linspace(0, np.max(abs(L)), n))
+    return np.histogram(abs(ll), np.linspace(0, np.max(abs(ll)), n))
 
 
-def plot_histogram(L, n):
-    a = abs_histogram(L, n)
+def plot_histogram(ll, n):
+    a = abs_histogram(ll, n)
     plt.hist(a[0], bins=a[1])
     plt.show()
 
 
-def circle_histogram(L, n):
+def circle_histogram(ll, n):
     """Return histogram of arg(L) -phase-
     over [-pi, pi], sampling with $n$ values"""
-    return np.histogram(phase(L), np.linspace(-np.pi, np.pi, n))
+    return np.histogram(phase(ll), np.linspace(-np.pi, np.pi, n))
 
 
 def plot_circle(h):
@@ -42,7 +41,7 @@ def plot_circle(h):
 # We test how "looks" an entry. Change line_test to change which entry is plot.
 
 # ------ Test absolute histogram. Not relevant. ------
-line_test = 1
+line_test = 20000
 n_samples = 10  # number of values for the sampling
 
 plot_histogram(mat[:-5, line_test], n_samples)

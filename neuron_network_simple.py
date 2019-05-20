@@ -32,7 +32,7 @@ class Network(object):
         ever used in computing the outputs from later layers."""
         self.num_layers = len(sizes)
         self.sizes = sizes
-        self.biases = [np.random.randn(y) for y in sizes[1:]]
+        self.biases = [np.random.randn(y,1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
 
@@ -43,12 +43,12 @@ class Network(object):
         return a
 
     def SGD(self, training_data, epochs, mini_batch_size, eta,
-            test_data=None):
+            evaluation_data=None):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The ``training_data`` is a list of tuples
         ``(x, y)`` representing the training inputs and the desired
         outputs.  The other non-optional parameters are
-        self-explanatory.  If ``test_data`` is provided then the
+        self-explanatory.  If ``evaluation_data`` is provided then the
         network will be evaluated against the test data after each
         epoch, and partial progress printed out.  This is useful for
         tracking progress, but slows things down substantially."""
@@ -57,8 +57,8 @@ class Network(object):
             random.shuffle(training_data)
             for k in range(0, n, mini_batch_size):
                 self.update_mini_batch(training_data[k:k+mini_batch_size], eta)
-            if test_data:
-                print("Epoch {0}: {1} / {2}".format(j, self.evaluate(test_data), len(test_data)))
+            if evaluation_data is not None:
+                print("Epoch {0}: {1} / {2}".format(j, self.evaluate(evaluation_data), len(evaluation_data)))
             else:
                 print("Epoch {0} complete".format(j))
 
@@ -98,7 +98,7 @@ class Network(object):
         delta = self.cost_derivative(activations[-1], y) * \
             sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
-        nabla_w[-1] = np.dot(delta, activations[-1].transpose())
+        nabla_w[-1] = np.dot(delta, activations[-2].transpose())
         # Note that the variable l in the loop below is used a little
         # differently to the notation in Chapter 2 of the book.  Here,
         # l = 1 means the last layer of neurons, l = 2 is the
@@ -110,7 +110,7 @@ class Network(object):
             sp = sigmoid_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
-            nabla_w[-l] = np.dot(delta, activations[-l].transpose())
+            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
         return nabla_b, nabla_w
 
     def evaluate(self, data, convert=False):
@@ -131,12 +131,10 @@ class Network(object):
         efficiency reasons -- the program usually evaluates the cost
         on the training data and the accuracy on other data sets.
         """
-        if convert:
-            f = np.argmax
-        else:
-            f = lambda z:z-1
-        return sum(np.argmax(self.feedforward(x)) == f(y) for (x, y) in data)
 
+        test_results = [(np.argmax(self.feedforward(x)), np.argmax(y))
+                            for (x, y) in data]
+        return sum(int(y == x) for (x, y) in test_results)
 
     @staticmethod
     def cost_derivative(output_activations, y):
